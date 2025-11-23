@@ -61,9 +61,27 @@ app.post('/criar-usuario', async (req, res) => {
   }
 });
 
+/**
+ * ROTA PARA APAGAR A TABELA DE USUÁRIOS
+ * Usamos app.delete() pois é uma operação de exclusão.
+ */
+app.delete('/apagar-tabela-usuarios', async (req, res) => {
+  let db;
+  try {
+    db = await openDb();
+    await db.run('DROP TABLE IF EXISTS usuarios');
+    console.log('Tabela "usuarios" apagada com sucesso.');
+    res.status(200).send({ message: 'Tabela de usuários apagada com sucesso!' });
+  } catch (err) {
+    console.error('Erro ao apagar a tabela:', err.message);
+    res.status(500).send('Erro ao processar sua requisição.');
+  } finally {
+    if (db) await db.close();
+  }
+});
+
 // --- Inicia o Servidor ---
 app.listen(port, () => {
   console.log(`Servidor rodando em http://localhost:${port}`);
   console.log('Aguardando requisições do front-end...');
 });
-
